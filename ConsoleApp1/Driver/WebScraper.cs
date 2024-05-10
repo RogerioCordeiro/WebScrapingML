@@ -31,8 +31,25 @@ namespace WebScraping.Driver
             {
                 var item = new Item();
                 item.Title = element.FindElement(By.ClassName("ui-search-item__title")).Text;
-                var real = element.FindElement(By.ClassName("andes-money-amount__fraction")).Text; //+ "," + element.FindElement(By.ClassName("andes-money-amount__cents")).Text;
-                item.Price = Convert.ToDouble(real);
+
+                var fractionElement = element.FindElement(By.ClassName("andes-money-amount__fraction"));
+                var real = fractionElement != null ? fractionElement.Text : "00";
+
+                string cent = "00";
+                try
+                {
+                    var centsElement = element.FindElement(By.ClassName("andes-money-amount__cents"));
+                    cent = centsElement.Text;
+                }
+
+                catch (NoSuchElementException)
+                {
+                    cent = string.Empty;
+                }
+
+                double.TryParse(real + "," + cent, out double preco);
+                item.Price = preco;
+
                 item.Description = element.FindElement(By.ClassName("ui-search-link")).Text;
                 item.Link = element.FindElement(By.ClassName("ui-search-link")).GetAttribute("href");
 
