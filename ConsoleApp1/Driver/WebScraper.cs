@@ -36,12 +36,12 @@ namespace WebScraping.Driver
                 var real = fractionElement != null ? fractionElement.Text : "00";
 
                 string cent = "00";
+
                 try
                 {
                     var centsElement = element.FindElement(By.ClassName("andes-money-amount__cents"));
                     cent = centsElement.Text;
                 }
-
                 catch (NoSuchElementException)
                 {
                     cent = string.Empty;
