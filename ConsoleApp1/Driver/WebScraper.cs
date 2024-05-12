@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using EasyAutomationFramework;
 using java.awt;
 using OpenQA.Selenium;
-using WebScraping.Model;
+using WebScraping.Entities.Anuncios;
 
 namespace WebScraping.Driver
 {
@@ -17,7 +17,7 @@ namespace WebScraping.Driver
     {
         public DataTable GetData(string link)
         {
-            var itens = new List<Item>();
+            var anuncios = new List<Anuncio>();
 
             for (int paginas = 0;  paginas < 2000; paginas += 50) 
             {
@@ -33,8 +33,8 @@ namespace WebScraping.Driver
 
                     foreach (var element in elements)
                     {
-                        var item = new Item();
-                        item.Title = element.FindElement(By.ClassName("ui-search-item__title")).Text;
+                        var anuncio = new Anuncio();
+                        anuncio.Title = element.FindElement(By.ClassName("ui-search-item__title")).Text;
 
                         var fractionElement = element.FindElement(By.ClassName("andes-money-amount__fraction"));
                         var real = fractionElement != null ? fractionElement.Text : "00";
@@ -53,16 +53,16 @@ namespace WebScraping.Driver
                         
                         double.TryParse(real + "," + cent, out double preco);
 
-                        item.Price = preco;
+                        anuncio.Price = preco;
 
-                        item.Description = element.FindElement(By.ClassName("ui-search-link")).Text;
-                        item.Link = element.FindElement(By.ClassName("ui-search-link")).GetAttribute("href");
+                        anuncio.Description = element.FindElement(By.ClassName("ui-search-link")).Text;
+                        anuncio.Link = element.FindElement(By.ClassName("ui-search-link")).GetAttribute("href");
 
-                        itens.Add(item);
+                    anuncios.Add(anuncio);
                     }
 
             }
-            return Base.ConvertTo(itens);
+            return Base.ConvertTo(anuncios);
         }
     }
 }
