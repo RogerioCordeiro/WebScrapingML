@@ -13,9 +13,9 @@ using WebScraping.Entities.Anuncios;
 
 namespace WebScraping.Driver
 {
-    public class WebScraper : Web
+    public class WebScraperCategorias : Web
     {
-        public DataTable GetData(string link)
+        public DataTable GetData(string baseURL)
         {
             var anuncios = new List<Anuncio>();
 
@@ -25,9 +25,9 @@ namespace WebScraping.Driver
                 if (driver == null)
                     StartBrowser();
 
-                link = (paginas > 0)  ? link + $"_Desde_{paginas + 1}_NoIndex_True" : link;
+                baseURL = (paginas > 0)  ? baseURL + $"_Desde_{paginas + 1}_NoIndex_True" : baseURL;
 
-                Navigate(link);
+                Navigate(baseURL);
 
                 var elements = GetValue(TypeElement.Xpath, "//*[@id=\"root-app\"]/div/div[3]/section/ol").element.FindElements(By.ClassName("shops__layout-item"));
 
