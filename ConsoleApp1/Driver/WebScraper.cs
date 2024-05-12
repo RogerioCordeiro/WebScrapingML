@@ -17,46 +17,51 @@ namespace WebScraping.Driver
     {
         public DataTable GetData(string link)
         {
-            if(driver == null)
-                StartBrowser();
+            var itens = new List<Item>();
 
-            var itens  = new List<Item>();
-
-            Navigate(link);
-
-            var elements = GetValue(TypeElement.Xpath, "//*[@id=\"root-app\"]/div/div[3]/section/ol").element.FindElements(By.ClassName("shops__layout-item"));
- 
-
-            foreach (var element in elements) 
+            for (int paginas = 0;  paginas < 2000; paginas += 50) 
             {
-                var item = new Item();
-                item.Title = element.FindElement(By.ClassName("ui-search-item__title")).Text;
 
-                var fractionElement = element.FindElement(By.ClassName("andes-money-amount__fraction"));
-                var real = fractionElement != null ? fractionElement.Text : "00";
+                if (driver == null)
+                    StartBrowser();
 
-                string cent = "00";
+                link = (paginas > 0)  ? link + $"_Desde_{paginas + 1}_NoIndex_True" : link;
 
-                try
-                {
-                    var centsElement = element.FindElement(By.ClassName("andes-money-amount__cents"));
-                    cent = centsElement.Text;
-                }
-                catch (NoSuchElementException)
-                {
-                    cent = string.Empty;
-                }
+                Navigate(link);
 
-                double.TryParse(real + "," + cent, out double preco);
-                item.Price = preco;
+                var elements = GetValue(TypeElement.Xpath, "//*[@id=\"root-app\"]/div/div[3]/section/ol").element.FindElements(By.ClassName("shops__layout-item"));
 
-                item.Description = element.FindElement(By.ClassName("ui-search-link")).Text;
-                item.Link = element.FindElement(By.ClassName("ui-search-link")).GetAttribute("href");
+                    foreach (var element in elements)
+                    {
+                        var item = new Item();
+                        item.Title = element.FindElement(By.ClassName("ui-search-item__title")).Text;
 
-                itens.Add(item);
+                        var fractionElement = element.FindElement(By.ClassName("andes-money-amount__fraction"));
+                        var real = fractionElement != null ? fractionElement.Text : "00";
+
+                        string cent = "00";
+
+                        try
+                        {
+                            var centsElement = element.FindElement(By.ClassName("andes-money-amount__cents"));
+                            cent = centsElement.Text;
+                        }
+                        catch (NoSuchElementException)
+                        {
+                            cent = string.Empty;
+                        }
+                        
+                        double.TryParse(real + "," + cent, out double preco);
+
+                        item.Price = preco;
+
+                        item.Description = element.FindElement(By.ClassName("ui-search-link")).Text;
+                        item.Link = element.FindElement(By.ClassName("ui-search-link")).GetAttribute("href");
+
+                        itens.Add(item);
+                    }
 
             }
-
             return Base.ConvertTo(itens);
         }
     }
