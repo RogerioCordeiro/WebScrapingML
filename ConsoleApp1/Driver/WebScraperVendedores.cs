@@ -12,7 +12,7 @@ namespace WebScraping.Driver
 {
     public class WebScraperVendedores : Web
     {
-        public DataTable GetDataTable(string baseUrl) 
+        public DataTable GetData(string baseUrl) 
         {
             if (driver == null)
                 StartBrowser();

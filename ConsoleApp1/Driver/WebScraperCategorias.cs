@@ -54,7 +54,17 @@ namespace WebScraping.Driver
                         double.TryParse(real + "," + cent, out double preco);
 
                         anuncio.Price = preco;
-
+                        string publicidade = "";
+                        try
+                        {
+                            var patrocio = element.FindElement(By.ClassName("ui-search-item__pub-label"));
+                            publicidade = patrocio.Text;
+                        }
+                    catch (NoSuchElementException)
+                    {
+                        publicidade = "Lista";
+                    }
+                    anuncio.Campanha = publicidade;
                         anuncio.Description = element.FindElement(By.ClassName("ui-search-link")).Text;
                         anuncio.Link = element.FindElement(By.ClassName("ui-search-link")).GetAttribute("href");
 
